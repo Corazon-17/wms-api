@@ -51,8 +51,26 @@ func (c *Client) Authorize() (string, error) {
 }
 
 func (c *Client) ExchangeToken(code string) error {
+	timestamp := time.Now().Unix()
 
-	url := fmt.Sprintf("%s/oauth/token", c.baseURL)
+	path := "/oauth/token"
+
+	base := fmt.Sprintf("%s%s%d%s",
+		c.partnerID,
+		path,
+		timestamp,
+		code,
+	)
+
+	sign := Sign(c.partnerKey, base)
+
+	url := fmt.Sprintf("%s%s?partner_id=%s&timestamp=%d&sign=%s",
+		c.baseURL,
+		path,
+		c.partnerID,
+		timestamp,
+		sign,
+	)
 
 	body := map[string]string{
 		"grant_type": "authorization_code",
@@ -89,6 +107,13 @@ func (c *Client) ExchangeToken(code string) error {
 
 func (c *Client) RefreshToken() error {
 
+	c.token.refreshLock.Lock()
+	defer c.token.refreshLock.Unlock()
+
+	if !c.token.IsExpired() {
+		return nil
+	}
+
 	url := fmt.Sprintf("%s/oauth/token", c.baseURL)
 
 	body := map[string]string{
@@ -122,7 +147,7 @@ func (c *Client) RefreshToken() error {
 
 func (c *Client) ensureToken() error {
 
-	if c.token.AccessToken == "" {
+	if c.token.Get() == "" {
 		code, err := c.Authorize()
 		if err != nil {
 			return err

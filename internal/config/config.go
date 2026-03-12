@@ -8,7 +8,8 @@ import (
 )
 
 type Config struct {
-	AppPort string
+	AppPort          string
+	CorsAllowOrigins string
 
 	DatabaseURL string
 
@@ -23,8 +24,6 @@ type Config struct {
 	MarketplaceRedirect   string
 }
 
-var AppConfig *Config
-
 func Load() *Config {
 
 	err := godotenv.Load()
@@ -33,7 +32,8 @@ func Load() *Config {
 	}
 
 	cfg := &Config{
-		AppPort: getEnv("APP_PORT", "3000"),
+		AppPort:          getEnv("APP_PORT", "3000"),
+		CorsAllowOrigins: getEnv("CORS_ALLOW_ORIGINS", "*"),
 
 		DatabaseURL: getEnv("DATABASE_URL", ""),
 
@@ -48,7 +48,6 @@ func Load() *Config {
 		MarketplaceRedirect:   getEnv("MARKETPLACE_REDIRECT", ""),
 	}
 
-	AppConfig = cfg
 	return cfg
 }
 

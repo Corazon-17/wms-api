@@ -22,7 +22,6 @@ func (h *AuthHandler) Login(c fiber.Ctx) error {
 	}
 
 	var req LoginRequest
-
 	if err := c.Bind().Body(&req); err != nil {
 		return err
 	}

@@ -37,11 +37,11 @@ func (r *OrderRepository) FindAll(ctx context.Context, q dto.OrderQuery) ([]mode
 		q.Page = 1
 	}
 
-	if q.Limit == 0 {
-		q.Limit = 10
+	if q.PageSize == 0 {
+		q.PageSize = 10
 	}
 
-	offset := (q.Page - 1) * q.Limit
+	offset := (q.Page - 1) * q.PageSize
 
 	sortField := "updated_at"
 	if q.Sort != "" {
@@ -63,7 +63,7 @@ func (r *OrderRepository) FindAll(ctx context.Context, q dto.OrderQuery) ([]mode
 
 	query.
 		Order(sortField + " " + sortOrder).
-		Limit(q.Limit).
+		Limit(q.PageSize).
 		Offset(offset)
 
 	err = query.Scan(ctx)

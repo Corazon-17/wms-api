@@ -1,10 +1,10 @@
 package dto
 
 type OrderQuery struct {
-	WMSStatus string `query:"wms_status"`
+	WMSStatus string `query:"wmsStatus"`
 
-	Page  int `query:"page"`
-	Limit int `query:"limit"`
+	Page     int `query:"page"`
+	PageSize int `query:"pageSize"`
 
 	Sort  string `query:"sort"`
 	Order string `query:"order"`

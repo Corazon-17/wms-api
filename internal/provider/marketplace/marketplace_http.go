@@ -14,7 +14,7 @@ const maxRetries = 3
 
 func (c *Client) doRequest(req *http.Request, result interface{}) error {
 
-	for attempt := 0; attempt < maxRetries; attempt++ {
+	for attempt := range maxRetries {
 
 		resp, err := c.http.Do(req)
 		if err != nil {

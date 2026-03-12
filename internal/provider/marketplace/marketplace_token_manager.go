@@ -10,7 +10,8 @@ type TokenManager struct {
 	RefreshToken string
 	ExpiresAt    time.Time
 
-	mu sync.Mutex
+	mu          sync.Mutex
+	refreshLock sync.Mutex
 }
 
 func (t *TokenManager) Set(access, refresh string, expiresIn int) {

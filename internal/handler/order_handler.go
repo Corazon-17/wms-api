@@ -3,6 +3,7 @@ package handler
 import (
 	"wms-api/internal/dto"
 	"wms-api/internal/service"
+	"wms-api/pkg/pagination"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -32,11 +33,7 @@ func (h *OrderHandler) GetOrders(c fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{
 		"data": orders,
-		"meta": fiber.Map{
-			"total": total,
-			"page":  q.Page,
-			"limit": q.Limit,
-		},
+		"meta": pagination.GeneratePaginationMeta(q.Page, q.PageSize, total),
 	})
 }
 
