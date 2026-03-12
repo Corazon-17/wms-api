@@ -1,0 +1,14 @@
+# Binaries
+/main
+/app
+*.exe
+
+# Secrets
+.env
+
+# VS Code specific
+.vscode/
+
+# Tools & OS
+/tmp
+.DS_Store

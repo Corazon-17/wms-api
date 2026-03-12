@@ -1,0 +1,25 @@
+version: "3"
+
+dotenv: [".env"]
+
+tasks:
+  infra:
+    desc: Start infrastructure (colima + docker)
+    cmds:
+      - colima start
+      - docker compose up -d
+
+  infra:stop:
+    desc: Stop infrastructure
+    cmds:
+      - docker compose down
+      - colima stop
+
+  dev:
+    desc: Run all services locally
+    cmds:
+      - go run ./cmd/main.go
+
+  migrate:
+    cmds:
+      - ./scripts/migrate.sh $DATABASE_URL migrations
