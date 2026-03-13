@@ -10,11 +10,16 @@ import (
 
 func RegisterOrderRoutes(api fiber.Router, handler *handler.OrderHandler, cfg *config.Config) {
 
-	protected := api.Group("", middleware.APIKeyAuth(cfg))
+	protected := api.Group("orders", middleware.APIKeyAuth(cfg))
 
-	protected.Get("/orders", handler.GetOrders)
-	protected.Get("/orders/:order_sn", handler.GetOrder)
-	protected.Post("/orders/:order_sn/pick", handler.PickOrder)
-	protected.Post("/orders/:order_sn/pack", handler.PackOrder)
-	protected.Post("/orders/:order_sn/ship", handler.ShipOrder)
+	protected.Get("wms-statuses", handler.GetWMSStatuses)
+	protected.Get("marketplace-statuses", handler.GetMarketplaceStatuses)
+	protected.Get("shipping-statuses", handler.GetShippingStatuses)
+
+	protected.Get("", handler.GetOrders)
+
+	protected.Get(":order_sn", handler.GetOrder)
+	protected.Post(":order_sn/pick", handler.PickOrder)
+	protected.Post(":order_sn/pack", handler.PackOrder)
+	protected.Post(":order_sn/ship", handler.ShipOrder)
 }

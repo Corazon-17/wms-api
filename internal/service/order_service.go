@@ -40,14 +40,14 @@ func (s *OrderService) GetOrders(ctx context.Context, q dto.OrderQuery) ([]dto.O
 	return result, total, nil
 }
 
-func (s *OrderService) GetOrder(ctx context.Context, orderSN string) (*dto.OrderResponse, error) {
+func (s *OrderService) GetOrder(ctx context.Context, orderSN string) (*dto.OrderDetailResponse, error) {
 
-	order, err := s.repo.FindByOrderSN(ctx, orderSN)
+	order, err := s.repo.FindOrderDetailByOrderSN(ctx, orderSN)
 	if err != nil {
 		return nil, err
 	}
 
-	resp := dto.NewOrderResponse(*order)
+	resp := dto.NewOrderDetailResponse(*order)
 
 	return &resp, nil
 }
@@ -59,11 +59,11 @@ func (s *OrderService) PickOrder(ctx context.Context, orderSN string) error {
 		return err
 	}
 
-	if order.WMSStatus != domain.WMSReadyToPick {
+	if order.WMSStatusID != domain.WMSReadyToPick {
 		return errors.New("order cannot be picked")
 	}
 
-	order.WMSStatus = domain.WMSPicking
+	order.WMSStatusID = domain.WMSPicking
 
 	return s.repo.Update(ctx, order)
 }
@@ -75,11 +75,11 @@ func (s *OrderService) PackOrder(ctx context.Context, orderSN string) error {
 		return err
 	}
 
-	if order.WMSStatus != domain.WMSPicking {
+	if order.WMSStatusID != domain.WMSPicking {
 		return errors.New("order cannot be packed")
 	}
 
-	order.WMSStatus = domain.WMSPacked
+	order.WMSStatusID = domain.WMSPacked
 
 	return s.repo.Update(ctx, order)
 }
@@ -91,7 +91,7 @@ func (s *OrderService) ShipOrder(ctx context.Context, orderSN string, channelID 
 		return nil, err
 	}
 
-	if order.WMSStatus != domain.WMSPacked {
+	if order.WMSStatusID != domain.WMSPacked {
 		return nil, errors.New("order must be packed before shipping")
 	}
 
@@ -100,7 +100,7 @@ func (s *OrderService) ShipOrder(ctx context.Context, orderSN string, channelID 
 		return nil, err
 	}
 
-	order.WMSStatus = domain.WMSShipped
+	order.WMSStatusID = domain.WMSShipped
 	order.ShippingStatus = resp.Data.ShippingStatus
 	order.TrackingNumber = resp.Data.TrackingNo
 
@@ -119,21 +119,7 @@ func (s *OrderService) SyncOrders(ctx context.Context) error {
 		return err
 	}
 
-	for _, o := range orders {
-
-		order := model.Order{
-			OrderSN:           o.OrderSN,
-			ShopID:            o.ShopID,
-			MarketplaceStatus: o.Status,
-			ShippingStatus:    o.ShippingStatus,
-			WMSStatus:         domain.WMSReadyToPick,
-			TotalAmount:       o.TotalAmount,
-		}
-
-		s.repo.Upsert(ctx, &order)
-	}
-
-	return nil
+	return s.repo.SyncOrders(ctx, orders)
 }
 
 func (s *OrderService) UpdateMarketplaceStatus(ctx context.Context, orderSN string, status string) error {
@@ -158,4 +144,23 @@ func (s *OrderService) UpdateShippingStatus(ctx context.Context, orderSN string,
 	order.ShippingStatus = shippingState
 
 	return s.repo.Update(ctx, order)
+}
+
+func (s *OrderService) GetWMSStatuses(ctx context.Context) ([]dto.WMSStatusResponse, error) {
+	status, err := s.repo.GetWMSStatuses(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := dto.NewWMSStatusResponse(status)
+
+	return resp, nil
+}
+
+func (s *OrderService) GetMarketplaceStatuses(ctx context.Context) ([]string, error) {
+	return s.repo.GetMarketplaceStatuses(ctx)
+}
+
+func (s *OrderService) GetShippingStatuses(ctx context.Context) ([]string, error) {
+	return s.repo.GetShippingStatuses(ctx)
 }

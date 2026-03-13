@@ -1,19 +1,22 @@
 package domain
 
-func AllowedActions(status string) []string {
+func AllowedActions(status string) *string {
 
 	switch status {
 
 	case WMSReadyToPick:
-		return []string{"pick"}
+		result := "pickup"
+		return &result
 
 	case WMSPicking:
-		return []string{"pack"}
+		result := "pack"
+		return &result
 
 	case WMSPacked:
-		return []string{"ship"}
+		result := "ship"
+		return &result
 
 	default:
-		return []string{}
+		return nil
 	}
 }
