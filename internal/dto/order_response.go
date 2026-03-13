@@ -13,7 +13,7 @@ type OrderResponse struct {
 	ShippingStatus    string    `json:"shippingStatus"`
 	TrackingNumber    string    `json:"trackingNumber"`
 	TotalAmount       float64   `json:"totalAmount"`
-	AllowedActions    *string   `json:"allowedActions"`
+	AllowedAction     *string   `json:"allowedAction"`
 	CreatedAt         time.Time `json:"createdAt"`
 	UpdatedAt         time.Time `json:"updatedAt"`
 }
@@ -27,7 +27,7 @@ func NewOrderResponse(order model.Order) OrderResponse {
 		ShippingStatus:    order.ShippingStatus,
 		TrackingNumber:    order.TrackingNumber,
 		TotalAmount:       order.TotalAmount,
-		AllowedActions:    domain.AllowedActions(order.WMSStatusID),
+		AllowedAction:     domain.AllowedAction(order.WMSStatusID),
 		CreatedAt:         order.CreatedAt,
 		UpdatedAt:         order.UpdatedAt,
 	}
@@ -64,12 +64,12 @@ func NewOrderItemResponses(items []model.OrderItem) []OrderItemResponse {
 
 type OrderDetailResponse struct {
 	OrderSN           string              `json:"orderSN"`
-	WMSStatus         string              `json:"wmsStatus"`
+	WMSStatusID       string              `json:"wmsStatus"`
 	MarketplaceStatus string              `json:"marketplaceStatus"`
 	ShippingStatus    string              `json:"shippingStatus"`
 	TrackingNumber    string              `json:"trackingNumber"`
 	TotalAmount       float64             `json:"totalAmount"`
-	AllowedActions    *string             `json:"allowedActions"`
+	AllowedAction     *string             `json:"allowedAction"`
 	CreatedAt         time.Time           `json:"createdAt"`
 	UpdatedAt         time.Time           `json:"updatedAt"`
 	Items             []OrderItemResponse `json:"items"`
@@ -79,12 +79,12 @@ func NewOrderDetailResponse(order model.OrderDetail) OrderDetailResponse {
 
 	return OrderDetailResponse{
 		OrderSN:           order.OrderSN,
-		WMSStatus:         order.WMSStatus,
+		WMSStatusID:       order.WMSStatusID,
 		MarketplaceStatus: order.MarketplaceStatus,
 		ShippingStatus:    order.ShippingStatus,
 		TrackingNumber:    order.TrackingNumber,
 		TotalAmount:       order.TotalAmount,
-		AllowedActions:    domain.AllowedActions(order.WMSStatus),
+		AllowedAction:     domain.AllowedAction(order.WMSStatusID),
 		CreatedAt:         order.CreatedAt,
 		UpdatedAt:         order.UpdatedAt,
 		Items:             NewOrderItemResponses(order.Items),

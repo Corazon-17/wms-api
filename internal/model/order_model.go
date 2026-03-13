@@ -40,7 +40,8 @@ type OrderDetail struct {
 	ShopID                string         `bun:"shop_id"`
 	MarketplaceStatus     string         `bun:"marketplace_status"`
 	ShippingStatus        string         `bun:"shipping_status"`
-	WMSStatus             string         `bun:"wms_status"`
+	WMSStatusID           string         `bun:"wms_status_id"`
+	WMSStatus             WMSStatus      `bun:"wms_status,rel:belongs-to,join:wms_status_id=id"`
 	TrackingNumber        string         `bun:"tracking_number"`
 	TotalAmount           float64        `bun:"total_amount"`
 	RawMarketplacePayload map[string]any `bun:"raw_marketplace_payload,type:jsonb"`

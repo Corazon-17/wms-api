@@ -39,17 +39,17 @@ func (h *OrderHandler) GetOrders(c fiber.Ctx) error {
 
 func (h *OrderHandler) GetOrder(c fiber.Ctx) error {
 
-	type Request struct {
+	type Params struct {
 		OrderSN string `uri:"order_sn"`
 	}
 
-	var req Request
+	var p Params
 
-	if err := c.Bind().URI(&req); err != nil {
+	if err := c.Bind().URI(&p); err != nil {
 		return err
 	}
 
-	order, err := h.service.GetOrder(c.Context(), req.OrderSN)
+	order, err := h.service.GetOrder(c.Context(), p.OrderSN)
 	if err != nil {
 		return c.Status(404).JSON(fiber.Map{"error": "order not found"})
 	}
@@ -60,11 +60,11 @@ func (h *OrderHandler) GetOrder(c fiber.Ctx) error {
 func (h *OrderHandler) PickOrder(c fiber.Ctx) error {
 
 	type Params struct {
-		OrderSN string `params:"order_sn"`
+		OrderSN string `uri:"order_sn"`
 	}
 
 	var p Params
-	if err := c.Bind().Query(&p); err != nil {
+	if err := c.Bind().URI(&p); err != nil {
 		return err
 	}
 
@@ -83,11 +83,11 @@ func (h *OrderHandler) PickOrder(c fiber.Ctx) error {
 func (h *OrderHandler) PackOrder(c fiber.Ctx) error {
 
 	type Params struct {
-		OrderSN string `params:"order_sn"`
+		OrderSN string `uri:"order_sn"`
 	}
 
 	var p Params
-	if err := c.Bind().Query(&p); err != nil {
+	if err := c.Bind().URI(&p); err != nil {
 		return err
 	}
 
@@ -105,20 +105,24 @@ func (h *OrderHandler) PackOrder(c fiber.Ctx) error {
 
 func (h *OrderHandler) ShipOrder(c fiber.Ctx) error {
 
-	type Request struct {
-		OrderSN   string `params:"order_sn"`
-		ChannelId string `params:"channel_id"`
+	type Params struct {
+		OrderSN string `uri:"order_sn"`
 	}
 
-	var req Request
-	c.Bind().Query(&req)
+	var p Params
+	if err := c.Bind().URI(&p); err != nil {
+		return err
+	}
 
-	order, err := h.service.ShipOrder(c.Context(), req.OrderSN, req.ChannelId)
+	order, err := h.service.ShipOrder(c.Context(), p.OrderSN, "JNE")
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	return c.JSON(order)
+	return c.JSON(fiber.Map{
+		"message": "order shipped",
+		"data":    order,
+	})
 }
 
 func (h *OrderHandler) GetWMSStatuses(c fiber.Ctx) error {
@@ -148,6 +152,18 @@ func (h *OrderHandler) GetMarketplaceStatuses(c fiber.Ctx) error {
 func (h *OrderHandler) GetShippingStatuses(c fiber.Ctx) error {
 
 	result, err := h.service.GetShippingStatuses(c.Context())
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(result)
+}
+
+func (h *OrderHandler) GetOrderSummary(c fiber.Ctx) error {
+
+	result, err := h.service.GetOrderSummary(c.Context())
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
 			"error": err.Error(),

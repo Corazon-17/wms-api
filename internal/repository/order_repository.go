@@ -30,7 +30,7 @@ func (r *OrderRepository) FindAll(ctx context.Context, q dto.OrderQuery) ([]mode
 		Model(&orders)
 
 	if q.Search != "" {
-		query.Where("order_sn = ?", q.Search)
+		query.Where("order_sn ILIKE ?", "%"+q.Search+"%")
 	}
 
 	if q.FilterField != "" && q.FilterValues != "" {
@@ -47,7 +47,7 @@ func (r *OrderRepository) FindAll(ctx context.Context, q dto.OrderQuery) ([]mode
 
 		filterValues := strings.Split(q.FilterValues, ",")
 
-		query.Where("? IN (?)", bun.Ident(filterField), bun.Tuple(filterValues))
+		query.Where("? IN (?)", bun.Ident(filterField), bun.List(filterValues))
 	}
 
 	total, err := query.Count(ctx)
@@ -312,4 +312,24 @@ func (r *OrderRepository) GetWMSStatuses(ctx context.Context) ([]model.WMSStatus
 		Scan(ctx)
 
 	return statuses, err
+}
+
+func (r *OrderRepository) GetOrderCounts(ctx context.Context) (int, int, error) {
+
+	var result struct {
+		Total     int `bun:"total"`
+		Cancelled int `bun:"cancelled"`
+	}
+
+	err := r.db.NewSelect().
+		TableExpr("orders").
+		ColumnExpr("COUNT(*) AS total").
+		ColumnExpr("COUNT(*) FILTER (WHERE marketplace_status = 'cancelled') AS cancelled").
+		Scan(ctx, &result)
+
+	if err != nil {
+		return 0, 0, err
+	}
+
+	return result.Total, result.Cancelled, nil
 }

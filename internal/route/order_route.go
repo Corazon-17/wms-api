@@ -12,14 +12,15 @@ func RegisterOrderRoutes(api fiber.Router, handler *handler.OrderHandler, cfg *c
 
 	protected := api.Group("orders", middleware.APIKeyAuth(cfg))
 
-	protected.Get("wms-statuses", handler.GetWMSStatuses)
-	protected.Get("marketplace-statuses", handler.GetMarketplaceStatuses)
-	protected.Get("shipping-statuses", handler.GetShippingStatuses)
+	protected.Get("/summary", handler.GetOrderSummary)
+	protected.Get("/wms-statuses", handler.GetWMSStatuses)
+	protected.Get("/marketplace-statuses", handler.GetMarketplaceStatuses)
+	protected.Get("/shipping-statuses", handler.GetShippingStatuses)
 
-	protected.Get("", handler.GetOrders)
+	protected.Get("/", handler.GetOrders)
 
-	protected.Get(":order_sn", handler.GetOrder)
-	protected.Post(":order_sn/pick", handler.PickOrder)
-	protected.Post(":order_sn/pack", handler.PackOrder)
-	protected.Post(":order_sn/ship", handler.ShipOrder)
+	protected.Get("/:order_sn", handler.GetOrder)
+	protected.Post("/:order_sn/pick", handler.PickOrder)
+	protected.Post("/:order_sn/pack", handler.PackOrder)
+	protected.Post("/:order_sn/ship", handler.ShipOrder)
 }

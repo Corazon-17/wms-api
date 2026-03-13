@@ -1,11 +1,11 @@
 package domain
 
-func AllowedActions(status string) *string {
+func AllowedAction(status string) *string {
 
 	switch status {
 
 	case WMSReadyToPick:
-		result := "pickup"
+		result := "pick"
 		return &result
 
 	case WMSPicking:

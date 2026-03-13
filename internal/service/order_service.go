@@ -164,3 +164,21 @@ func (s *OrderService) GetMarketplaceStatuses(ctx context.Context) ([]string, er
 func (s *OrderService) GetShippingStatuses(ctx context.Context) ([]string, error) {
 	return s.repo.GetShippingStatuses(ctx)
 }
+
+type OrderSummary struct {
+	TotalOrders     int `json:"totalOrders"`
+	CancelledOrders int `json:"cancelledOrders"`
+}
+
+func (s *OrderService) GetOrderSummary(ctx context.Context) (OrderSummary, error) {
+
+	total, cancelled, err := s.repo.GetOrderCounts(ctx)
+	if err != nil {
+		return OrderSummary{}, err
+	}
+
+	return OrderSummary{
+		TotalOrders:     total,
+		CancelledOrders: cancelled,
+	}, nil
+}
