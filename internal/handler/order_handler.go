@@ -24,6 +24,12 @@ func (h *OrderHandler) GetOrders(c fiber.Ctx) error {
 		return err
 	}
 
+	if q.Page < 1 || q.PageSize < 1 {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "page and pageSize must be greater than 0",
+		})
+	}
+
 	orders, total, err := h.service.GetOrders(c.Context(), q)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{

@@ -134,14 +134,14 @@ func (s *OrderService) UpdateMarketplaceStatus(ctx context.Context, orderSN stri
 	return s.repo.Update(ctx, order)
 }
 
-func (s *OrderService) UpdateShippingStatus(ctx context.Context, orderSN string, shippingState string) error {
+func (s *OrderService) UpdateShippingStatus(ctx context.Context, orderSN string, shippingStatus string) error {
 
 	order, err := s.repo.FindByOrderSN(ctx, orderSN)
 	if err != nil {
 		return err
 	}
 
-	order.ShippingStatus = shippingState
+	order.ShippingStatus = shippingStatus
 
 	return s.repo.Update(ctx, order)
 }

@@ -15,9 +15,8 @@ func NewWebhookHandler(s *service.OrderService) *WebhookHandler {
 }
 
 func (h *WebhookHandler) OrderStatus(c fiber.Ctx) error {
-
 	type Payload struct {
-		OrderSN string `json:"orderSN"`
+		OrderSN string `json:"order_sn"`
 		Status  string `json:"status"`
 	}
 
@@ -47,8 +46,8 @@ func (h *WebhookHandler) OrderStatus(c fiber.Ctx) error {
 func (h *WebhookHandler) ShippingStatus(c fiber.Ctx) error {
 
 	type Payload struct {
-		OrderSN       string `json:"orderSN"`
-		ShippingState string `json:"shipping_state"`
+		OrderSN        string `json:"order_sn"`
+		ShippingStatus string `json:"shipping_status"`
 	}
 
 	var p Payload
@@ -60,7 +59,7 @@ func (h *WebhookHandler) ShippingStatus(c fiber.Ctx) error {
 	err := h.service.UpdateShippingStatus(
 		c.Context(),
 		p.OrderSN,
-		p.ShippingState,
+		p.ShippingStatus,
 	)
 
 	if err != nil {
