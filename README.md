@@ -38,31 +38,38 @@ The backend integrates with the **Marketplace Mock API** while exposing internal
 
 # Installation
 
-### 1. Copy environment file
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Corazon-17/wms-api.git
+cd wms-api
+```
+
+### 2. Copy environment file
 
 ```
 cp .env.example .env
 ```
 
-### 2. Install dependencies
+### 3. Install dependencies
 
 ```
 go mod tidy
 ```
 
-### 3. Run the infrastructure (database)
+### 4. Run the infrastructure (database)
 
 ```
 task infra
 ```
 
-### 4. Database migration
+### 5. Database migration
 
 ```
 task migrate
 ```
 
-### 5. Run the server
+### 6. Run the server
 
 ```
 task dev
