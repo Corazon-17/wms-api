@@ -38,6 +38,15 @@ The backend integrates with the **Marketplace Mock API** while exposing internal
 
 # Installation
 
+### Prerequisite
+
+This installation process requires **Task** (Taskfile) to be installed on your machine.
+
+If you don't have it installed yet, please follow the official installation guide:
+https://taskfile.dev/docs/installation
+
+Make sure `task` is available in your terminal before continuing with the installation steps.
+
 ### 1. Clone the repository
 
 ```bash
